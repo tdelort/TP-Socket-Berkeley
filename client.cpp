@@ -16,6 +16,9 @@ int main()
 {
 	WSADATA wsaData;
 	int iResult;
+	struct addrinfo *results = NULL,
+                    *ptr = NULL,
+                    hints;
 
 	// Initialize Winsock
 	iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
@@ -27,9 +30,6 @@ int main()
 	
 	int s = socket(AF_INET, SOCK_STREAM, 0);
 
-	addrinfo hints;
-	addrinfo* results = NULL;
-	
 	memset(&hints, 0, sizeof(struct addrinfo));
 	hints.ai_family = AF_INET;
 	
@@ -39,6 +39,19 @@ int main()
 		printf("getaddrinfo failed: %d\n", iResult);
 		return 1;
 	}
+	
+	for (ptr = results; ptr != NULL; ptr = ptr->ai_next)
+	{
+		iResult = connect(s, ptr->ai_addr, (int)ptr->ai_addrlen);
+		if (iResult == SOCKET_ERROR) 
+		{
+			closesocket(s);
+			s = INVALID_SOCKET;
+			continue;
+		}
+		break;
+	}
+	freeaddrinfo(results);
 
 	// TODO : shutdown
 	int err = closesocket(s);
