@@ -19,6 +19,8 @@ int main()
 	struct addrinfo *results = NULL,
                     *ptr = NULL,
                     hints;
+	const char *sendbuf = "Hello";
+	char recvbuf[512];
 
 	// Initialize Winsock
 	iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
@@ -28,7 +30,7 @@ int main()
 		return 1;
 	}
 	
-	int s = socket(AF_INET, SOCK_STREAM, 0);
+	SOCKET s = socket(AF_INET, SOCK_STREAM, 0);
 
 	memset(&hints, 0, sizeof(struct addrinfo));
 	hints.ai_family = AF_INET;
@@ -52,9 +54,41 @@ int main()
 		break;
 	}
 	freeaddrinfo(results);
+	
+
+	iResult = send(s, sendbuf, (int)strlen(sendbuf), 0 );
+    if (iResult == SOCKET_ERROR) {
+        printf("send failed with error: %d\n", WSAGetLastError());
+        closesocket(s);
+        WSACleanup();
+        return 1;
+    }
+
+	printf("Bytes Sent: %ld\n", iResult);
+
+	iResult = shutdown(s, SD_SEND);
+    if (iResult == SOCKET_ERROR) {
+        printf("shutdown failed with error: %d\n", WSAGetLastError());
+        closesocket(s);
+        WSACleanup();
+        return 1;
+    }
+
+	do {
+
+        iResult = recv(s, recvbuf, 512, 0);
+        if ( iResult > 0 )
+            printf("Bytes received: %d\n", iResult);
+        else if ( iResult == 0 )
+            printf("Connection closed\n");
+        else
+            printf("recv failed with error: %d\n", WSAGetLastError());
+
+    } while( iResult > 0 );
 
 	// TODO : shutdown
 	int err = closesocket(s);
+	WSACleanup();
 
 	return 0;
 }
