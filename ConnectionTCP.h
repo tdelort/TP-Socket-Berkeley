@@ -3,11 +3,14 @@
 #include <windows.h>
 #include <winsock2.h>
 #include <ws2tcpip.h>
+
 #include "Connection.h"
 
 class ConnectionTCP : Connection
 {
 public:
+	ConnectionTCP(SOCKET s);
+	~ConnectionTCP();
 	void Send(const std::string msg) override;
 	void Shutdown() override;
 	std::string Receive() override;

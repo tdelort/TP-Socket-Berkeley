@@ -8,6 +8,10 @@
 #include <iphlpapi.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string>
+#include <iostream>
+
+#include "ConnectionTCP.h"
 
 #pragma comment(lib, "Ws2_32.lib")
 
@@ -27,7 +31,7 @@ void Init()
 
 }
 
-SOCKET Connect()
+ConnectionTCP Connect()
 {
 	int err;
 	struct addrinfo *results = NULL,
@@ -67,58 +71,31 @@ SOCKET Connect()
 		exit(1);
 	}
 
-	return s;
+	return ConnectionTCP(s);
 }
 
-void Cleanup(SOCKET s)
+void Cleanup()
 {
-	int err = closesocket(s);
 	WSACleanup();
 }
 
 int main()
 {
-	const char *sendbuf = "Hello";
-	char recvbuf[512];
-	int err;
-
 	Init();
 
-	SOCKET s = Connect();
+	ConnectionTCP c = Connect();
 	
 	// ============== Refactored in the Connection class ================
-	err = send(s, sendbuf, (int)strlen(sendbuf), 0 );
-    if (err == SOCKET_ERROR) {
-        printf("send failed with error: %d\n", WSAGetLastError());
-        closesocket(s);
-        WSACleanup();
-        return 1;
-    }
+	c.Send("Hello");
 
-	printf("Bytes Sent: %ld\n", err);
+	c.Shutdown();
 
-	err = shutdown(s, SD_SEND);
-    if (err == SOCKET_ERROR) {
-        printf("shutdown failed with error: %d\n", WSAGetLastError());
-        closesocket(s);
-        WSACleanup();
-        return 1;
-    }
+	std::string res = c.Receive();
 
-	do {
-
-        err = recv(s, recvbuf, 512, 0);
-        if ( err > 0 )
-            printf("Bytes received: %d\n", err);
-        else if ( err == 0 )
-            printf("Connection closed\n");
-        else
-            printf("recv failed with error: %d\n", WSAGetLastError());
-
-    } while( err > 0 );
+	std::cout << res << std::endl;
 	// ============== End of Connection class ================
 
-	Cleanup(s);
+	Cleanup();
 
 	return 0;
 }
