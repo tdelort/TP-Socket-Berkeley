@@ -33,7 +33,8 @@ SOCKET Connect()
 	struct addrinfo *results = NULL,
                     *ptr = NULL,
                     hints;
-	SOCKET s = socket(AF_INET, SOCK_STREAM, 0);
+
+	SOCKET s = INVALID_SOCKET;
 
 	memset(&hints, 0, sizeof(struct addrinfo));
 	hints.ai_family = AF_INET;
@@ -42,11 +43,12 @@ SOCKET Connect()
 	if (err)
 	{
 		printf("getaddrinfo failed: %d\n", err);
-		return 1;
+		exit(1);
 	}
 	
 	for (ptr = results; ptr != NULL; ptr = ptr->ai_next)
 	{
+		s = socket(AF_INET, SOCK_STREAM, 0);
 		err = connect(s, ptr->ai_addr, (int)ptr->ai_addrlen);
 		if (err == SOCKET_ERROR) 
 		{
