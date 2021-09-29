@@ -21,7 +21,8 @@ void Init()
     WSADATA wsaData;
     // Initialize Winsock
     int err = WSAStartup(MAKEWORD(2,2), &wsaData);
-    if (err != 0) {
+    if (err != 0) 
+    {
         printf("WSAStartup failed with error: %d\n", err);
         exit(1);
     }
@@ -34,7 +35,7 @@ SOCKET Listen()
 	int err;
     SOCKET listenSocket = INVALID_SOCKET;
 
-    ZeroMemory(&hints, sizeof(hints));
+    memset(&hints, 0, sizeof(struct addrinfo));
     hints.ai_family = AF_INET;
     hints.ai_socktype = SOCK_STREAM;
     hints.ai_protocol = IPPROTO_TCP;
@@ -42,7 +43,8 @@ SOCKET Listen()
 
     // Resolve the server address and port
     err = getaddrinfo(NULL, DEFAULT_PORT, &hints, &result);
-    if ( err != 0 ) {
+    if ( err != 0 ) 
+    {
         printf("getaddrinfo failed with error: %d\n", err);
         WSACleanup();
         exit(1);
@@ -50,7 +52,8 @@ SOCKET Listen()
 
     // Create a SOCKET for connecting to server
     listenSocket = socket(result->ai_family, result->ai_socktype, result->ai_protocol);
-    if (listenSocket == INVALID_SOCKET) {
+    if (listenSocket == INVALID_SOCKET) 
+    {
         printf("socket failed with error: %ld\n", WSAGetLastError());
         freeaddrinfo(result);
         WSACleanup();
@@ -65,7 +68,8 @@ SOCKET Listen()
        by the file descriptor sockfd
 	*/
     err = bind( listenSocket, result->ai_addr, (int)result->ai_addrlen);
-    if (err == SOCKET_ERROR) {
+    if (err == SOCKET_ERROR) 
+    {
         printf("bind failed with error: %d\n", WSAGetLastError());
         freeaddrinfo(result);
         closesocket(listenSocket);
@@ -81,7 +85,8 @@ SOCKET Listen()
        connection requests using accept(2).
 	*/
     err = listen(listenSocket, SOMAXCONN);
-    if (err == SOCKET_ERROR) {
+    if (err == SOCKET_ERROR) 
+    {
         printf("listen failed with error: %d\n", WSAGetLastError());
         closesocket(listenSocket);
         WSACleanup();
@@ -99,7 +104,8 @@ void Cleanup(SOCKET listenSocket, SOCKET clientSocket)
 
     // shutdown the connection since we're done
     err = shutdown(clientSocket, SD_SEND);
-    if (err == SOCKET_ERROR) {
+    if (err == SOCKET_ERROR) 
+    {
         printf("shutdown failed with error: %d\n", WSAGetLastError());
         closesocket(clientSocket);
         WSACleanup();
@@ -139,7 +145,8 @@ int __cdecl main(void)
        socket sockfd is unaffected by this call.
 	   */
     clientSocket = accept(listenSocket, NULL, NULL);
-    if (clientSocket == INVALID_SOCKET) {
+    if (clientSocket == INVALID_SOCKET) 
+    {
         printf("accept failed with error: %d\n", WSAGetLastError());
         closesocket(listenSocket);
         WSACleanup();
@@ -147,15 +154,18 @@ int __cdecl main(void)
     }
 
     // Receive until the peer shuts down the connection
-    do {
+    do 
+    {
 
         iResult = recv(clientSocket, recvbuf, recvbuflen, 0);
-        if (iResult > 0) {
+        if (iResult > 0) 
+        {
             printf("Bytes received: %d\n", iResult);
 
         // Echo the buffer back to the sender
             iSendResult = send( clientSocket, recvbuf, iResult, 0 );
-            if (iSendResult == SOCKET_ERROR) {
+            if (iSendResult == SOCKET_ERROR) 
+            {
                 printf("send failed with error: %d\n", WSAGetLastError());
                 closesocket(clientSocket);
                 WSACleanup();
@@ -165,7 +175,8 @@ int __cdecl main(void)
         }
         else if (iResult == 0)
             printf("Connection closing...\n");
-        else  {
+        else  
+        {
             printf("recv failed with error: %d\n", WSAGetLastError());
             closesocket(clientSocket);
             WSACleanup();
