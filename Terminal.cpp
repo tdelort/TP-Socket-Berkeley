@@ -26,11 +26,11 @@ void Terminal::run()
 
     FD_SET(m_listenSocket, &m_readingSet);
 
-    std::for_each(m_clientSockets.cbegin(), m_clientSockets.cend(), [this](SOCKET s){ FD_SET(s, &m_readingSet); });
+    // std::for_each(m_clientSockets.cbegin(), m_clientSockets.cend(), [this](SOCKET s){ FD_SET(s, &m_readingSet); });
     // equivalent UnaryFunction
     // std::for_each(m_clientSockets.begin(), m_clientSockets.end(), AddToSet(&m_readingSet));
 
-    int ret = select(m_nfds, &m_readingSet, &m_writingSet, &m_errorSet, 0);
+    int ret = select(m_nfds, &m_readingSet, NULL, NULL, 0);
 
     if(ret > 0)
     {
@@ -51,10 +51,10 @@ void Terminal::run()
     }
     else if(ret == 0)
     {
-
+        // timeout
     }
     else
     {
-
+        // error
     }
 }

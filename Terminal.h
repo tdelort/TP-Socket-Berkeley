@@ -31,12 +31,7 @@ private:
     /* data */
     SOCKET m_listenSocket;
 
-    std::vector<SOCKET> m_clientSockets;
-    std::vector<Connection*> m_connexions;
-
     fd_set m_readingSet;
-    fd_set m_writingSet;
-    fd_set m_errorSet;
 
     int m_nfds;
 
