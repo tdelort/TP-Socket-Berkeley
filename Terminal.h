@@ -14,7 +14,7 @@
 #pragma comment (lib, "Ws2_32.lib")
 // #pragma comment (lib, "Mswsock.lib")
 
-#include "Connection.h"
+#include "ConnectionTCP.h"
 
 #include <vector>
 
@@ -40,5 +40,5 @@ public:
     Terminal(SOCKET listenSocket);
     ~Terminal();
 
-    void run();
+    ConnectionTCP* accept();
 };

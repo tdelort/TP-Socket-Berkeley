@@ -1,4 +1,19 @@
+#undef UNICODE
+
+#define WIN32_LEAN_AND_MEAN
+
+#include <windows.h>
+#include <winsock2.h>
+#include <ws2tcpip.h>
+#include <stdlib.h>
+#include <stdio.h>
+
+// Need to link with Ws2_32.lib
+#pragma comment (lib, "Ws2_32.lib")
+// #pragma comment (lib, "Mswsock.lib")
+
 #include "Terminal.h"
+#include "ConnectionTCP.h"
 
 #include <algorithm>
 
@@ -11,24 +26,11 @@ Terminal::~Terminal()
 {
 }
 
-// struct AddToSet
-// {
-//     fd_set* m_set;
-//     AddToSet(fd_set* set) : m_set(set) {}
-//     void operator()(SOCKET s) { FD_SET(s, m_set); }
-// };
-
-void Terminal::run()
+ConnectionTCP* Terminal::accept()
 {
     FD_ZERO(&m_readingSet);
-    // FD_ZERO(&m_writingSet);
-    // FD_ZERO(&m_errorSet);
 
     FD_SET(m_listenSocket, &m_readingSet);
-
-    // std::for_each(m_clientSockets.cbegin(), m_clientSockets.cend(), [this](SOCKET s){ FD_SET(s, &m_readingSet); });
-    // equivalent UnaryFunction
-    // std::for_each(m_clientSockets.begin(), m_clientSockets.end(), AddToSet(&m_readingSet));
 
     int ret = select(m_nfds, &m_readingSet, NULL, NULL, 0);
 
@@ -37,24 +39,25 @@ void Terminal::run()
         if(FD_ISSET(m_listenSocket, &m_readingSet))
         {
             // An accept is pending
+            SOCKET clientSocket = accept(m_listenSocket, NULL, NULL);
+            if (clientSocket == INVALID_SOCKET) 
+            {
+                printf("accept failed with error: %d\n", WSAGetLastError());
+                closesocket(listenSocket);
+                WSACleanup();
+                exit(1);
+            }
+            ConnectionTCP* c = new ConnectionTCP(clientSocket);
+            return c;
         }
+    }
+    else if (ret < 0)
+    {
+        printf("select failed with error: %d\n", ret);
+        closesocket(m_listenSocket);
+        WSACleanup();
+        exit(1);
+    }
 
-        // Not sure it belongs here now
-        // std::for_each(m_clientSockets.cbegin(), m_clientSockets.cend(),
-        //     [](SOCKET s){
-        //          if(FD_ISSET(s, &m_readingSet))
-        //          {
-        //              // handle recv
-        //          }
-        //     }
-        // );
-    }
-    else if(ret == 0)
-    {
-        // timeout
-    }
-    else
-    {
-        // error
-    }
+    return nullptr;
 }
