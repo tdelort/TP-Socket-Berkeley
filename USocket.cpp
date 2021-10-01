@@ -8,7 +8,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "USocket.cpp"
+#include "USocket.h"
+#include "ConnectionTCP.h"
 
 USocket::USocket()
 {
@@ -32,5 +33,29 @@ Connection* USocket::Connect(std::string addr, int port)
 
 void USocket::Update()
 {
-    
+    // c'est un peu cata ici
+    for (auto & terminal : m_terminals) {
+        ConnectionTCP conn;
+        if (terminal.accept(conn))
+        {
+            m_connections.push_back(conn);
+        }
+    }
+
+    // à partir de là j'ai à peu près compris
+    fd_set readSet;
+    FD_ZERO(&readSet);
+    int err = select(0, &readSet, nullptr, nullptr, nullptr);
+
+    for( int i = 0; i < readSet.fd_count; ++i )
+    {
+        SOCKET s = readSet.fd_array[i];
+        // J'ai repris le buffer depuis le cours, ça sera sûrement à updater
+        char* buffer = (char*) malloc(sizeof(char)*1024);
+        int data = recv(s, buffer, 1024, 0);
+
+        free(buffer);
+        // là j'avoue je sais pas quoi faire de ce truc, et pas quoi faire ensuite
+
+    }
 }
