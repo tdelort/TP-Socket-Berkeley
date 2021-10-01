@@ -40,5 +40,5 @@ public:
     Terminal(SOCKET listenSocket);
     ~Terminal();
 
-    ConnectionTCP* accept();
+    ConnectionTCP* acceptConnections();
 };

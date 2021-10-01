@@ -26,7 +26,7 @@ Terminal::~Terminal()
 {
 }
 
-ConnectionTCP* Terminal::accept()
+ConnectionTCP* Terminal::acceptConnections()
 {
     FD_ZERO(&m_readingSet);
 
@@ -43,7 +43,7 @@ ConnectionTCP* Terminal::accept()
             if (clientSocket == INVALID_SOCKET) 
             {
                 printf("accept failed with error: %d\n", WSAGetLastError());
-                closesocket(listenSocket);
+                closesocket(m_listenSocket);
                 WSACleanup();
                 exit(1);
             }
