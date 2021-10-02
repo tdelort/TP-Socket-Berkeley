@@ -10,6 +10,20 @@ class Connection;
 
 class USocket
 {
+public:
+    struct Config
+    {
+        std::function<void(Connection*)> OnConnect;
+    };
+
+    USocket(Config config);
+    ~USocket();
+
+    Terminal Listen(char* port);
+
+    //weak_ptr ici
+    Connection* Connect(std::string addr, int port);
+
 private:
     /**
      * Main function of the networkingThread
@@ -33,13 +47,5 @@ private:
     std::thread m_networkingThread;
     std::vector<Connection*> m_connections;
     std::vector<Terminal> m_terminals;
-
-public:
-    USocket();
-    ~USocket();
-
-    Terminal Listen(char* port);
-
-    //weak_ptr ici
-    Connection* Connect(std::string addr, int port );
+    Config m_config;
 };

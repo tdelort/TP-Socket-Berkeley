@@ -34,8 +34,6 @@ private:
     fd_set m_readingSet;
 
     int m_nfds;
-
-    bool m_continueRunning = true;
 public:
     Terminal(SOCKET listenSocket);
     ~Terminal();

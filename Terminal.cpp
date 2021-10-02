@@ -60,6 +60,7 @@ ConnectionTCP* Terminal::acceptConnections()
         WSACleanup();
         exit(1);
     }
+    printf("aucune connection detectee\n");
 
     return nullptr;
 }

@@ -16,8 +16,9 @@
 #pragma comment (lib, "Ws2_32.lib")
 // #pragma comment (lib, "Mswsock.lib")
 
-USocket::USocket()
+USocket::USocket(Config config)
 {
+    m_config = config;
     WSADATA wsaData;
     // Initialize Winsock
     int err = WSAStartup(MAKEWORD(2,2), &wsaData);
@@ -116,7 +117,10 @@ void USocket::Update()
     for (auto terminal : m_terminals) {
         ConnectionTCP* conn = terminal.acceptConnections();
         if (conn != nullptr)
+        {
             m_connections.push_back(conn);
+            m_config.OnConnect(conn);
+        }
     }
 
     // à partir de là j'ai à peu près compris
@@ -126,7 +130,9 @@ void USocket::Update()
     // Ajouter tous les sockets clients dans fd_set
     std::for_each(m_connections.cbegin(), m_connections.cend(), [readSet](Connection* c){FD_SET(c->m_s, &readSet); });
 
-    int err = select(0, &readSet, nullptr, nullptr, nullptr);
+    struct timeval tv = { 0, 50 };
+
+    int err = select(0, &readSet, nullptr, nullptr, &tv);
 
     for(Connection* c : m_connections)
     {
@@ -134,6 +140,12 @@ void USocket::Update()
         {
             // J'ai repris le buffer depuis le cours, ça sera sûrement à updater
             char* buffer = (char*) malloc(sizeof(char)*1024);
+            if (!buffer)
+            {
+                printf("malloc failed \n");
+                WSACleanup();
+                exit(1);
+            }
             int data = recv(c->m_s, buffer, 1024, 0);
 
             free(buffer);
@@ -142,3 +154,4 @@ void USocket::Update()
         }
     }
 }
+

@@ -7,8 +7,13 @@
 
 int main(void) 
 {
+    USocket::Config config = {
+        [](Connection* c) {
+            std::cout << "new connection" << c << std::endl;
+        }
+    };
  
-    USocket server;
+    USocket server(config);
 
     Terminal t = server.Listen("5678");
     std::cout << "listen" << std::endl;
