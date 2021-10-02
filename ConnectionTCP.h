@@ -6,7 +6,7 @@
 
 #include "Connection.h"
 
-class ConnectionTCP : Connection
+class ConnectionTCP : public Connection
 {
 public:
 	ConnectionTCP(SOCKET s);

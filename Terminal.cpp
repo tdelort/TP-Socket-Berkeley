@@ -49,8 +49,8 @@ ConnectionTCP* Terminal::acceptConnections()
                 WSACleanup();
                 exit(1);
             }
-            ConnectionTCP* c = new ConnectionTCP(clientSocket);
-            return c;
+            ConnectionTCP* conn = new ConnectionTCP(clientSocket);
+            return conn;
         }
     }
     else if (ret < 0)

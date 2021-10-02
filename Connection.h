@@ -11,6 +11,7 @@ public:
 	virtual void Shutdown() = 0;
 	virtual std::string Receive() = 0;
 
+	friend class USocket;
 protected:
 	SOCKET m_s;
 };

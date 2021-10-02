@@ -10,6 +10,7 @@
 #include <ws2tcpip.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <algorithm>
 
 // Need to link with Ws2_32.lib
 #pragma comment (lib, "Ws2_32.lib")
@@ -111,31 +112,33 @@ Connection* USocket::Connect(std::string addr, int port)
 
 void USocket::Update()
 {
-    /*
     // c'est un peu cata ici
-    for (auto & terminal : m_terminals) {
-        ConnectionTCP conn;
-        if (terminal.accept(conn))
-        {
+    for (auto terminal : m_terminals) {
+        ConnectionTCP* conn = terminal.acceptConnections();
+        if (conn != nullptr)
             m_connections.push_back(conn);
-        }
     }
 
     // à partir de là j'ai à peu près compris
     fd_set readSet;
     FD_ZERO(&readSet);
+
+    // Ajouter tous les sockets clients dans fd_set
+    std::for_each(m_connections.cbegin(), m_connections.cend(), [readSet](Connection* c){FD_SET(c->m_s, &readSet); });
+
     int err = select(0, &readSet, nullptr, nullptr, nullptr);
 
-    for( int i = 0; i < readSet.fd_count; ++i )
+    for(Connection* c : m_connections)
     {
-        SOCKET s = readSet.fd_array[i];
-        // J'ai repris le buffer depuis le cours, ça sera sûrement à updater
-        char* buffer = (char*) malloc(sizeof(char)*1024);
-        int data = recv(s, buffer, 1024, 0);
+        if(FD_ISSET(c->m_s, &readSet))
+        {
+            // J'ai repris le buffer depuis le cours, ça sera sûrement à updater
+            char* buffer = (char*) malloc(sizeof(char)*1024);
+            int data = recv(c->m_s, buffer, 1024, 0);
 
-        free(buffer);
-        // là j'avoue je sais pas quoi faire de ce truc, et pas quoi faire ensuite
+            free(buffer);
+            // là j'avoue je sais pas quoi faire de ce truc, et pas quoi faire ensuite
 
+        }
     }
-    */
 }
