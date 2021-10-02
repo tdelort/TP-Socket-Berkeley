@@ -11,6 +11,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <algorithm>
+#include <iostream>
 
 // Need to link with Ws2_32.lib
 #pragma comment (lib, "Ws2_32.lib")
@@ -35,7 +36,7 @@ USocket::~USocket()
     WSACleanup();
 }
 
-Terminal USocket::Listen(char* port)
+void USocket::Listen(char* port)
 {
     struct addrinfo *result = NULL;
     struct addrinfo hints;
@@ -102,7 +103,6 @@ Terminal USocket::Listen(char* port)
 
     Terminal t = Terminal(listenSocket);
     m_terminals.push_back(t);
-    return t;
 }
 
 Connection* USocket::Connect(std::string addr, int port)
@@ -138,19 +138,28 @@ void USocket::Update()
     {
         if(FD_ISSET(c->m_s, &readSet))
         {
-            // J'ai repris le buffer depuis le cours, ça sera sûrement à updater
-            char* buffer = (char*) malloc(sizeof(char)*1024);
-            if (!buffer)
-            {
-                printf("malloc failed \n");
-                WSACleanup();
-                exit(1);
-            }
-            int data = recv(c->m_s, buffer, 1024, 0);
+            // receive
+            std::string res = "";
+            char recvbuf[ConnectionTCP::RECV_BUF_LENGTH];
+            int err1;
+            do {
 
-            free(buffer);
-            // là j'avoue je sais pas quoi faire de ce truc, et pas quoi faire ensuite
+                err1 = recv(c->m_s, recvbuf, 512, 0);
+                if (err > 0)
+                {
+                    printf("Bytes received: %d\n", err);
+                    for (int i = 0; i < err; i++)
+                    {
+                        res += recvbuf[i];
+                    }
+                }
+                else if (err1 == 0)
+                    printf("Connection closed\n");
+                else
+                    printf("recv failed with error: %d\n", WSAGetLastError());
 
+            } while (err1 > 0);
+            std::cout << res << std::endl;
         }
     }
 }

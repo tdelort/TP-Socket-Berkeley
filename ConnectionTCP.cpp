@@ -43,28 +43,3 @@ void ConnectionTCP::Shutdown()
         exit(1);
     }
 }
-
-std::string ConnectionTCP::Receive()
-{
-    std::string res = "";
-    char recvbuf[ConnectionTCP::RECV_BUF_LENGTH];
-    int err;
-    do {
-
-        err = recv(m_s, recvbuf, 512, 0);
-        if (err > 0) 
-        {
-            printf("Bytes received: %d\n", err);
-            for (int i = 0; i < err; i++)
-            {
-                res += recvbuf[i];
-            }
-        }
-        else if (err == 0)
-            printf("Connection closed\n");
-        else
-            printf("recv failed with error: %d\n", WSAGetLastError());
-
-    } while (err > 0);
-    return res;
-}

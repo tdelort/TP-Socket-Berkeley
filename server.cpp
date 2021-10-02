@@ -15,17 +15,11 @@ int main(void)
  
     USocket server(config);
 
-    Terminal t = server.Listen("5678");
-    std::cout << "listen" << std::endl;
-    ConnectionTCP* c = nullptr;
-    do
+    server.Listen("5678");
+    while (true)
     {
-        c = t.acceptConnections();
-    } while (!c);
-
-    std::string msg = c->Receive();
-    std::cout << "msg : " << msg << std::endl;
-    c->Send(msg);
+        server.Update();
+    }
 
     return 0;
 }

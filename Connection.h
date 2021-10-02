@@ -9,7 +9,6 @@ class Connection
 public:
 	virtual void Send(const std::string msg) = 0;
 	virtual void Shutdown() = 0;
-	virtual std::string Receive() = 0;
 
 	friend class USocket;
 protected:

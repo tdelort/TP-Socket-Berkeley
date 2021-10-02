@@ -28,16 +28,18 @@ Terminal::~Terminal()
 
 ConnectionTCP* Terminal::acceptConnections()
 {
-    FD_ZERO(&m_readingSet);
+    fd_set readingSet;
 
-    FD_SET(m_listenSocket, &m_readingSet);
+    FD_ZERO(&readingSet);
+
+    FD_SET(m_listenSocket, &readingSet);
 
     struct timeval tv = {0, 50};
-    int ret = select(m_nfds, &m_readingSet, NULL, NULL, &tv);
+    int ret = select(m_nfds, &readingSet, NULL, NULL, &tv);
 
     if(ret > 0)
     {
-        if(FD_ISSET(m_listenSocket, &m_readingSet))
+        if(FD_ISSET(m_listenSocket, &readingSet))
         {
             // An accept is pending
             std::cout << "accept is pending" << std::endl;
@@ -60,7 +62,6 @@ ConnectionTCP* Terminal::acceptConnections()
         WSACleanup();
         exit(1);
     }
-    printf("aucune connection detectee\n");
 
     return nullptr;
 }

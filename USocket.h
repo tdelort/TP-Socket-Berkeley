@@ -19,10 +19,12 @@ public:
     USocket(Config config);
     ~USocket();
 
-    Terminal Listen(char* port);
+    void Listen(char* port);
 
     //weak_ptr ici
     Connection* Connect(std::string addr, int port);
+
+    void Update();
 
 private:
     /**
@@ -42,7 +44,7 @@ private:
      *    data = recv
      *    socket.onMessage(...., data, .....)
      */
-    void Update();
+    /*snif*/
 
     std::thread m_networkingThread;
     std::vector<Connection*> m_connections;

@@ -90,9 +90,9 @@ int main()
 
 	c.Shutdown();
 
-	std::string res = c.Receive();
+	//std::string res = c.Receive();
 
-	std::cout << res << std::endl;
+	//std::cout << res << std::endl;
 	// ============== End of Connection class ================
 
 	Cleanup();

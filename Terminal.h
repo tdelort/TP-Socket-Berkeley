@@ -31,8 +31,6 @@ private:
     /* data */
     SOCKET m_listenSocket;
 
-    fd_set m_readingSet;
-
     int m_nfds;
 public:
     Terminal(SOCKET listenSocket);
