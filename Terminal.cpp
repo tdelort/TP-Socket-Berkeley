@@ -10,12 +10,12 @@
 
 // Need to link with Ws2_32.lib
 #pragma comment (lib, "Ws2_32.lib")
-// #pragma comment (lib, "Mswsock.lib")
 
 #include "Terminal.h"
 #include "ConnectionTCP.h"
 
 #include <algorithm>
+#include <iostream>
 
 Terminal::Terminal(SOCKET listenSocket)
     : m_listenSocket(listenSocket), m_nfds(listenSocket)
@@ -26,24 +26,26 @@ Terminal::~Terminal()
 {
 }
 
-ConnectionTCP* Terminal::accept()
+ConnectionTCP* Terminal::acceptConnections()
 {
     FD_ZERO(&m_readingSet);
 
     FD_SET(m_listenSocket, &m_readingSet);
 
-    int ret = select(m_nfds, &m_readingSet, NULL, NULL, 0);
+    struct timeval tv = {0, 50};
+    int ret = select(m_nfds, &m_readingSet, NULL, NULL, &tv);
 
     if(ret > 0)
     {
         if(FD_ISSET(m_listenSocket, &m_readingSet))
         {
             // An accept is pending
+            std::cout << "accept is pending" << std::endl;
             SOCKET clientSocket = accept(m_listenSocket, NULL, NULL);
             if (clientSocket == INVALID_SOCKET) 
             {
                 printf("accept failed with error: %d\n", WSAGetLastError());
-                closesocket(listenSocket);
+                closesocket(m_listenSocket);
                 WSACleanup();
                 exit(1);
             }

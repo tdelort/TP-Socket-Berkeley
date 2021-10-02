@@ -1,13 +1,12 @@
 #pragma once
 
-#include "Connection.h"
-#include "Terminal.h"
-
 #include <thread>
 #include <vector>
 #include <string>
 #include <functional>
 
+class Terminal;
+class Connection;
 
 class USocket
 {
@@ -33,13 +32,13 @@ private:
 
     std::thread m_networkingThread;
     std::vector<Connection*> m_connections;
-    std::vector<Terminal*> m_terminals;
+    std::vector<Terminal> m_terminals;
 
 public:
     USocket();
     ~USocket();
 
-    void Listen(int port);
+    Terminal Listen(char* port);
 
     //weak_ptr ici
     Connection* Connect(std::string addr, int port );
