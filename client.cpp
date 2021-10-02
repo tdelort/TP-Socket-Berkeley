@@ -86,6 +86,8 @@ int main()
 	ConnectionTCP c = Connect();
 	
 	// ============== Refactored in the Connection class ================
+	printf("tkt meme pas frero, on va send\n");
+	Sleep(1000);
 	c.Send("Hello");
 
 	c.Shutdown();

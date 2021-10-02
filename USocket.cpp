@@ -128,7 +128,10 @@ void USocket::Update()
     FD_ZERO(&readSet);
 
     // Ajouter tous les sockets clients dans fd_set
-    std::for_each(m_connections.cbegin(), m_connections.cend(), [readSet](Connection* c){FD_SET(c->m_s, &readSet); });
+    for(Connection* c : m_connections)
+    {
+        FD_SET(c->m_s, &readSet);
+    }
 
     struct timeval tv = { 0, 50 };
 
@@ -141,26 +144,23 @@ void USocket::Update()
             // receive
             std::string res = "";
             char recvbuf[ConnectionTCP::RECV_BUF_LENGTH];
-            int err1;
+            int ret;
             do {
 
-                err1 = recv(c->m_s, recvbuf, 512, 0);
-                if (err > 0)
+                ret = recv(c->m_s, recvbuf, 512, 0);
+                if (ret > 0)
                 {
-                    printf("Bytes received: %d\n", err);
-                    for (int i = 0; i < err; i++)
+                    printf("Bytes received: %d\n", ret);
+                    for (int i = 0; i < ret; i++)
                     {
                         res += recvbuf[i];
                     }
                 }
-                else if (err1 == 0)
-                    printf("Connection closed\n");
-                else
+                else if (ret < 0)
                     printf("recv failed with error: %d\n", WSAGetLastError());
-
-            } while (err1 > 0);
-            std::cout << res << std::endl;
+            } while (ret > 0);
+            if(res!="")
+                c->m_config.OnMessage(c, res);
         }
     }
 }
-
