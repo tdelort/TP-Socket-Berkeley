@@ -16,13 +16,13 @@ public:
         std::function<void(Connection*)> OnConnect;
     };
 
-    USocket(Config config);
+    USocket();
     ~USocket();
 
-    void Listen(char* port);
+    void Listen(char* port, Config config);
 
     //weak_ptr ici
-    Connection* Connect(std::string addr, int port);
+    Connection* Connect(std::string addr, std::string port);
 
     void Update();
 

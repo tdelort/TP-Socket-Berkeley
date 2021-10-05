@@ -21,9 +21,9 @@ int main(void)
         }
     };
  
-    USocket server(config_c);
+    USocket server;
 
-    server.Listen("5678");
+    server.Listen("5678", config_c);
     while (true)
     {
         server.Update();

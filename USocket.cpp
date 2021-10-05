@@ -17,9 +17,8 @@
 #pragma comment (lib, "Ws2_32.lib")
 // #pragma comment (lib, "Mswsock.lib")
 
-USocket::USocket(Config config)
+USocket::USocket()
 {
-    m_config = config;
     WSADATA wsaData;
     // Initialize Winsock
     int err = WSAStartup(MAKEWORD(2,2), &wsaData);
@@ -36,8 +35,9 @@ USocket::~USocket()
     WSACleanup();
 }
 
-void USocket::Listen(char* port)
+void USocket::Listen(char* port, Config config)
 {
+    m_config = config;
     struct addrinfo *result = NULL;
     struct addrinfo hints;
 	int err;
@@ -105,10 +105,49 @@ void USocket::Listen(char* port)
     m_terminals.push_back(t);
 }
 
-Connection* USocket::Connect(std::string addr, int port)
+Connection* USocket::Connect(std::string addr, std::string port)
 {
-    // si la demande de co est acceptée, on crée et renvoie la co
-    return nullptr;
+    int err;
+    struct addrinfo* results = NULL,
+        * ptr = NULL,
+        hints;
+
+    SOCKET s = INVALID_SOCKET;
+
+    memset(&hints, 0, sizeof(struct addrinfo));
+    hints.ai_family = AF_INET;
+
+    err = getaddrinfo("127.0.0.1", port.c_str(), &hints, &results);
+    if (err)
+    {
+        printf("getaddrinfo failed: %d\n", err);
+        exit(1);
+    }
+
+    for (ptr = results; ptr != NULL; ptr = ptr->ai_next)
+    {
+        s = socket(AF_INET, SOCK_STREAM, 0);
+        err = connect(s, ptr->ai_addr, (int)ptr->ai_addrlen);
+        if (err == SOCKET_ERROR)
+        {
+            closesocket(s);
+            s = INVALID_SOCKET;
+            continue;
+        }
+        break;
+    }
+    freeaddrinfo(results);
+
+    if (s == INVALID_SOCKET)
+    {
+        printf("connection failed with error: %d\n", WSAGetLastError());
+        WSACleanup();
+        exit(1);
+    }
+
+    ConnectionTCP* res = new ConnectionTCP(s);
+    m_connections.push_back(res);
+    return res;
 }
 
 void USocket::Update()
