@@ -152,7 +152,7 @@ Connection* USocket::Connect(std::string addr, std::string port)
 
 void USocket::Update()
 {
-    // c'est un peu cata ici
+    // Handle Connect
     for (auto terminal : m_terminals) {
         ConnectionTCP* conn = terminal.acceptConnections();
         if (conn != nullptr)
@@ -161,8 +161,8 @@ void USocket::Update()
             m_config.OnConnect(conn);
         }
     }
-
-    // à partir de là j'ai à peu près compris
+    
+    // Handle Recv
     fd_set readSet;
     FD_ZERO(&readSet);
 
@@ -176,17 +176,17 @@ void USocket::Update()
 
     int err = select(0, &readSet, nullptr, nullptr, &tv);
 
-    for(Connection* c : m_connections)
-    {
-        if(FD_ISSET(c->m_s, &readSet))
+    std::transform(m_connections.begin(), m_connections.end(), m_connections.begin(),
+        [readSet](Connection* c) -> Connection*
         {
-            // receive
-            std::string res = "";
-            char recvbuf[ConnectionTCP::RECV_BUF_LENGTH];
-            int ret;
-            do {
+            if (FD_ISSET(c->m_s, &readSet))
+            {
+                // receive
+                std::string res = "";
+                char recvbuf[ConnectionTCP::RECV_BUF_LENGTH];
 
-                ret = recv(c->m_s, recvbuf, 512, 0);
+                int ret = recv(c->m_s, recvbuf, ConnectionTCP::RECV_BUF_LENGTH, 0);
+
                 if (ret > 0)
                 {
                     printf("Bytes received: %d\n", ret);
@@ -194,12 +194,22 @@ void USocket::Update()
                     {
                         res += recvbuf[i];
                     }
+
+                    c->m_config.OnMessage(c, res);
                 }
-                else if (ret < 0)
-                    printf("recv failed with error: %d\n", WSAGetLastError());
-            } while (ret > 0);
-            if(res!="")
-                c->m_config.OnMessage(c, res);
+                else
+                {
+                    c->m_config.OnDisconnect(c, ret);
+                    return nullptr;
+                }
+            }
+            return c;
         }
-    }
+    );
+
+    m_connections.erase(std::remove(
+        m_connections.begin(),
+        m_connections.end(),
+        nullptr
+    ), m_connections.end());
 }

@@ -18,10 +18,10 @@ public:
 	struct Config
 	{
 		std::function<void(Connection*, std::string)> OnMessage;
+		std::function<void(Connection*, int)> OnDisconnect;
 	};
 
 	virtual void Send(const std::string msg) = 0;
-	virtual void Shutdown() = 0;
 	void AddConfig(Config config);
 
 	friend class USocket;

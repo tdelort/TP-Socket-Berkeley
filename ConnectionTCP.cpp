@@ -17,6 +17,12 @@ ConnectionTCP::ConnectionTCP(SOCKET s)
 
 ConnectionTCP::~ConnectionTCP()
 {
+    int err = shutdown(m_s, SD_SEND);
+    if (err == SOCKET_ERROR) {
+        printf("shutdown failed with error: %d\n", WSAGetLastError());
+        WSACleanup();
+        exit(1);
+    }
     closesocket(m_s);
 }
 
@@ -31,15 +37,4 @@ void ConnectionTCP::Send(const std::string msg)
         exit(1);
     }
     printf("Bytes Sent: %ld\n", err);
-}
-
-void ConnectionTCP::Shutdown()
-{
-    int err = shutdown(m_s, SD_SEND);
-    if (err == SOCKET_ERROR) {
-        printf("shutdown failed with error: %d\n", WSAGetLastError());
-        closesocket(m_s);
-        WSACleanup();
-        exit(1);
-    }
 }

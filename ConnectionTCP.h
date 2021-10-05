@@ -12,6 +12,5 @@ public:
 	ConnectionTCP(SOCKET s);
 	~ConnectionTCP();
 	void Send(const std::string msg) override;
-	void Shutdown() override;
 	static const int RECV_BUF_LENGTH = 512;
 };

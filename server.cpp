@@ -11,6 +11,9 @@ int main(void)
     Connection::Config config_msg = {
         [](Connection* c, std::string msg) {
             std::cout << "new message : " << msg << std::endl;
+        },
+        [](Connection* c, int err) {
+            std::cout << "disconnect : " << err << std::endl;
         }
     };
 
