@@ -13,4 +13,5 @@ public:
 	~ConnectionTCP();
 	void Send(const std::string msg) override;
 	static const int RECV_BUF_LENGTH = 512;
+	Connection::Type ConnectionType() override;
 };

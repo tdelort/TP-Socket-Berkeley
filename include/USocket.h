@@ -5,8 +5,9 @@
 #include <string>
 #include <functional>
 
+#include "Connection.h"
+
 class Terminal;
-class Connection;
 
 class USocket
 {
@@ -22,7 +23,7 @@ public:
     void Listen(char* port, Config config);
 
     //weak_ptr ici
-    Connection* Connect(std::string addr, std::string port);
+    Connection* Connect(std::string addr, std::string port, Connection::Type type);
 
     //std::vector<std::weak_ptr<Connection>> GetAllConnections();
     std::vector<Connection*> GetAllConnections();

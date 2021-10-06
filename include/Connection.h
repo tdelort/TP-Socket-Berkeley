@@ -34,6 +34,9 @@ public:
 
 	friend class USocket;
 
+	enum class Type {TCP, UDP};
+	virtual Type ConnectionType() = 0;
+
 protected:
 	const unsigned int m_id;
 	SOCKET m_s;

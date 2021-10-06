@@ -118,7 +118,7 @@ void USocket::Listen(char* port, Config config)
     m_terminals.push_back(t);
 }
 
-Connection* USocket::Connect(std::string addr, std::string port)
+Connection* USocket::Connect(std::string addr, std::string port, Connection::Type type)
 {
     int err;
     struct addrinfo* results = NULL,

@@ -38,3 +38,8 @@ void ConnectionTCP::Send(const std::string msg)
     }
     printf("Bytes Sent: %ld\n", err);
 }
+
+Connection::Type ConnectionTCP::ConnectionType()
+{
+    return Connection::Type::TCP;
+}

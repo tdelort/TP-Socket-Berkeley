@@ -35,7 +35,7 @@ int main()
 
 	USocket client;
 
-	ConnectionTCP* c = (ConnectionTCP*)client.Connect("127.0.0.1", DEFAULT_PORT);
+	ConnectionTCP* c = (ConnectionTCP*)client.Connect("127.0.0.1", DEFAULT_PORT, Connection::Type::TCP);
 	c->AddConfig(config_msg);
 
 	std::string message;
