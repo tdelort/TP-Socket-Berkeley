@@ -12,7 +12,10 @@ int main(void)
     Connection::Config config_msg = {
         [](Connection* c, std::string msg, std::vector<Connection*> connections) {
 			std::cout << "new message : " << msg << " on connection : " << c->GetID() << std::endl;
-            std::for_each(connections.begin(), connections.end(), [msg, c](Connection* target){ target->Send(c->GetID() + "> " + msg); });
+            std::for_each(connections.begin(), connections.end(), [msg, c](Connection* target)
+            { 
+                if (c->GetID() != target->GetID()) { target->Send(c->GetID() + "> " + msg); };
+            });
 			std::cout << "broadcast done" << std::endl;
         },
         [](Connection* c) {
