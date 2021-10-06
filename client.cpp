@@ -22,7 +22,7 @@ int main()
 {
 	Connection::Config config_msg = {
 		[](Connection* c, std::string msg) {
-			std::cout << "new message : " << msg << std::endl;
+			std::cout << "new message : " << msg << "on connection : " << c->GetID() << std::endl;
 		}
 	};
 
@@ -31,13 +31,14 @@ int main()
 	ConnectionTCP* c = (ConnectionTCP*)client.Connect("127.0.0.1", DEFAULT_PORT);
 
 	std::string message;
-	while (true)
+	for(int i = 0; i < 2; i++)
 	{
 		//client.Update();
-
 		std::getline(std::cin, message);
 		c->Send(message);
 	}
+
+	delete c;
 
 	return 0;
 }

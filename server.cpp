@@ -12,8 +12,11 @@ int main(void)
         [](Connection* c, std::string msg) {
             std::cout << "new message : " << msg << std::endl;
         },
+        [](Connection* c) {
+            std::cout << "disconnect : " << std::endl;
+        },
         [](Connection* c, int err) {
-            std::cout << "disconnect : " << err << std::endl;
+            std::cout << "error : " << err << std::endl;
         }
     };
 
@@ -27,10 +30,9 @@ int main(void)
     USocket server;
 
     server.Listen("5678", config_c);
-    while (true)
-    {
-        server.Update();
-    }
+
+    std::string dummy;
+    std::cin >> dummy; 
 
     return 0;
 }

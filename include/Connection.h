@@ -14,18 +14,28 @@
 
 class Connection
 {
+private:
+	static unsigned int newID;
+
 public:
 	struct Config
 	{
 		std::function<void(Connection*, std::string)> OnMessage;
-		std::function<void(Connection*, int)> OnDisconnect;
+		std::function<void(Connection*)> OnDisconnect;
+		std::function<void(Connection*, int)> OnError;
 	};
+
+	Connection();
 
 	virtual void Send(const std::string msg) = 0;
 	void AddConfig(Config config);
 
+	unsigned int GetID();
+
 	friend class USocket;
+
 protected:
+	const unsigned int m_id;
 	SOCKET m_s;
 	Config m_config;
 };

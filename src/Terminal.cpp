@@ -18,7 +18,7 @@
 #include <iostream>
 
 Terminal::Terminal(SOCKET listenSocket)
-    : m_listenSocket(listenSocket), m_nfds(listenSocket)
+    : m_listenSocket(listenSocket)
 {
 }
 
@@ -35,7 +35,7 @@ ConnectionTCP* Terminal::acceptConnections()
     FD_SET(m_listenSocket, &readingSet);
 
     struct timeval tv = {0, 50};
-    int ret = select(m_nfds, &readingSet, NULL, NULL, &tv);
+    int ret = select(m_listenSocket, &readingSet, NULL, NULL, &tv);
 
     if(ret > 0)
     {

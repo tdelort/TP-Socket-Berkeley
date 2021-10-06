@@ -30,8 +30,6 @@ class Terminal
 private:
     /* data */
     SOCKET m_listenSocket;
-
-    int m_nfds;
 public:
     Terminal(SOCKET listenSocket);
     ~Terminal();

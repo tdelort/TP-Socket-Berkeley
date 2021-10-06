@@ -12,6 +12,7 @@
 #include <stdio.h>
 #include <algorithm>
 #include <iostream>
+#include <thread>
 
 // Need to link with Ws2_32.lib
 #pragma comment (lib, "Ws2_32.lib")
@@ -27,11 +28,23 @@ USocket::USocket()
         printf("WSAStartup failed with error: %d\n", err);
         exit(1);
     }
+
+    m_networkingThread = std::thread([this](){
+        while(m_threadRunning)
+        {
+            Update();
+        }
+    });
 }
 
 USocket::~USocket()
 {
-    // need to close sockets too
+    m_threadRunning = false;
+    m_networkingThread.join();
+
+    for(Connection* c : m_connections)
+        delete c;
+
     WSACleanup();
 }
 
@@ -197,9 +210,14 @@ void USocket::Update()
 
                     c->m_config.OnMessage(c, res);
                 }
+                else if (ret == 0)
+                {
+                    c->m_config.OnDisconnect(c);
+                    return nullptr;
+                }
                 else
                 {
-                    c->m_config.OnDisconnect(c, ret);
+                    c->m_config.OnError(c, WSAGetLastError());
                     return nullptr;
                 }
             }
