@@ -13,6 +13,7 @@
 
 #include "Terminal.h"
 #include "ConnectionTCP.h"
+#include "ConnectionUDP.h"
 
 #include <algorithm>
 #include <iostream>

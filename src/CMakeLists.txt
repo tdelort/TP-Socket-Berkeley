@@ -4,6 +4,7 @@ target_sources(Server
         ConnectionTCP.cpp
         Terminal.cpp
         USocket.cpp
+        ConnectionUDP.cpp
 )
 
 target_sources(Client
@@ -12,4 +13,5 @@ target_sources(Client
         ConnectionTCP.cpp
         Terminal.cpp
         USocket.cpp
+        ConnectionUDP.cpp
 )
