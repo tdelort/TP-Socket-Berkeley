@@ -1,7 +1,5 @@
 #include "Connection.h"
 
-unsigned int Connection::newID = 0;
-
 Connection::Connection()
 	: m_id(newID++)
 {}

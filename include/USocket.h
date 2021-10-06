@@ -24,6 +24,8 @@ public:
     //weak_ptr ici
     Connection* Connect(std::string addr, std::string port);
 
+    //std::vector<std::weak_ptr<Connection>> GetAllConnections();
+    std::vector<Connection*> GetAllConnections();
 
 private:
     void Update();

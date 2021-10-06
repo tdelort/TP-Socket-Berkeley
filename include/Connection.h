@@ -15,12 +15,12 @@
 class Connection
 {
 private:
-	static unsigned int newID;
+	static inline unsigned int newID = 0;
 
 public:
 	struct Config
 	{
-		std::function<void(Connection*, std::string)> OnMessage;
+		std::function<void(Connection*, std::string, std::vector<Connection*>)> OnMessage;
 		std::function<void(Connection*)> OnDisconnect;
 		std::function<void(Connection*, int)> OnError;
 	};

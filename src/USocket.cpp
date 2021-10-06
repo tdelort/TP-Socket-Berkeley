@@ -163,6 +163,11 @@ Connection* USocket::Connect(std::string addr, std::string port)
     return res;
 }
 
+std::vector<Connection*> USocket::GetAllConnections()
+{
+    return m_connections;
+}
+
 void USocket::Update()
 {
     // Handle Connect
@@ -190,7 +195,7 @@ void USocket::Update()
     int err = select(0, &readSet, nullptr, nullptr, &tv);
 
     std::transform(m_connections.begin(), m_connections.end(), m_connections.begin(),
-        [readSet](Connection* c) -> Connection*
+        [readSet, this](Connection* c) -> Connection*
         {
             if (FD_ISSET(c->m_s, &readSet))
             {
@@ -208,7 +213,8 @@ void USocket::Update()
                         res += recvbuf[i];
                     }
 
-                    c->m_config.OnMessage(c, res);
+                    std::cout << "c : " << c << std::endl;
+                    c->m_config.OnMessage(c, res, m_connections);
                 }
                 else if (ret == 0)
                 {

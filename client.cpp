@@ -21,19 +21,26 @@
 int main()
 {
 	Connection::Config config_msg = {
-		[](Connection* c, std::string msg) {
-			std::cout << "new message : " << msg << "on connection : " << c->GetID() << std::endl;
-		}
+		[](Connection* c, std::string msg, std::vector<Connection*> connections) {
+			std::cout << connections.size() << "< size of connections" << std::endl;
+			std::cout << "new message : " << msg << " on connection : " << c->GetID() << std::endl;
+		},
+        [](Connection* c) {
+            std::cout << "disconnect : " << std::endl;
+        },
+        [](Connection* c, int err) {
+            std::cout << "error : " << err << std::endl;
+        }
 	};
 
 	USocket client;
 
 	ConnectionTCP* c = (ConnectionTCP*)client.Connect("127.0.0.1", DEFAULT_PORT);
+	c->AddConfig(config_msg);
 
 	std::string message;
 	for(int i = 0; i < 2; i++)
 	{
-		//client.Update();
 		std::getline(std::cin, message);
 		c->Send(message);
 	}
