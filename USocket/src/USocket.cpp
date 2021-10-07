@@ -1,8 +1,6 @@
 #include "USocket.h"
 #include "Terminal.h"
 
-#include <stdlib.h>
-#include <stdio.h>
 #include <algorithm>
 #include <iostream>
 #include <thread>

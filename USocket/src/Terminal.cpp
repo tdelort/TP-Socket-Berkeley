@@ -1,8 +1,6 @@
 #include "Terminal.h"
 #include "ConnectionTCP.h"
 
-#include <stdlib.h>
-#include <stdio.h>
 #include <iostream>
 
 #ifdef __linux__
