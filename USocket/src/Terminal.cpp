@@ -11,51 +11,54 @@
 	using socket_t = SOCKET;
 #endif
 
-Terminal::Terminal(socket_t listenSocket)
-    : m_listenSocket(listenSocket)
+namespace uqac::network
 {
-}
-
-Terminal::~Terminal()
-{
-}
-
-ConnectionTCP* Terminal::acceptConnections()
-{
-    fd_set readingSet;
-
-    FD_ZERO(&readingSet);
-
-    FD_SET(m_listenSocket, &readingSet);
-
-    struct timeval tv = {0, 50};
-    int ret = select((int)m_listenSocket, &readingSet, nullptr, nullptr, &tv);
-
-    if(ret > 0)
+    Terminal::Terminal(socket_t listenSocket)
+        : m_listenSocket(listenSocket)
     {
-        if(FD_ISSET(m_listenSocket, &readingSet))
+    }
+
+    Terminal::~Terminal()
+    {
+    }
+
+    ConnectionTCP* Terminal::acceptConnections()
+    {
+        fd_set readingSet;
+
+        FD_ZERO(&readingSet);
+
+        FD_SET(m_listenSocket, &readingSet);
+
+        struct timeval tv = {0, 25};
+        int ret = select((int)m_listenSocket, &readingSet, nullptr, nullptr, &tv);
+
+        if(ret > 0)
         {
-            // An accept is pending
-            std::cout << "accept is pending" << std::endl;
-            socket_t clientSocket = accept(m_listenSocket, nullptr, nullptr);
-            if (clientSocket == INVALID_SOCKET) 
+            if(FD_ISSET(m_listenSocket, &readingSet))
             {
-                std::cerr << "accept failed with error : " << WSAGetLastError() << std::endl;
-                closesocket(m_listenSocket);
-                WSACleanup();
-                exit(1);
+                // An accept is pending
+                std::cout << "accept is pending" << std::endl;
+                socket_t clientSocket = accept(m_listenSocket, nullptr, nullptr);
+                if (clientSocket == INVALID_SOCKET) 
+                {
+                    std::cerr << "accept failed with error : " << WSAGetLastError() << std::endl;
+                    closesocket(m_listenSocket);
+                    WSACleanup();
+                    exit(1);
+                }
+                ConnectionTCP* conn = new ConnectionTCP(clientSocket);
+                return conn;
             }
-            ConnectionTCP* conn = new ConnectionTCP(clientSocket);
-            return conn;
         }
-    }
-    else if (ret < 0)
-    {
-        std::cerr << "select failed with error : " << ret << std::endl;
-        closesocket(m_listenSocket);
-        WSACleanup();
-        exit(1);
-    }
+        else if (ret < 0)
+        {
+            std::cerr << "select failed with error : " << ret << std::endl;
+            closesocket(m_listenSocket);
+            WSACleanup();
+            exit(1);
+        }
 
-    return nullptr;
+        return nullptr;
+    }
 }

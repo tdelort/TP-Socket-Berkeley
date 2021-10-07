@@ -12,12 +12,15 @@
 	using socket_t = SOCKET;
 #endif
 
-class ConnectionTCP : public Connection
+namespace uqac::network
 {
-public:
-	ConnectionTCP(socket_t s);
-	~ConnectionTCP();
-	void Send(const std::string msg) override;
-	static const int RECV_BUF_LENGTH = 512;
-	Connection::Type ConnectionType() override;
-};
+	class ConnectionTCP : public Connection
+	{
+	public:
+		ConnectionTCP(socket_t s);
+		~ConnectionTCP();
+		void Send(const std::string msg) override;
+		static const int RECV_BUF_LENGTH = 512;
+		Connection::Type ConnectionType() override;
+	};
+}

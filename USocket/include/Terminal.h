@@ -17,14 +17,17 @@
  * 
  * Only one new thread per server (we don't want to deal with tens or hundreds of threads)
  */
-class Terminal
+namespace uqac::network
 {
-private:
-    /* data */
-    socket_t m_listenSocket;
-public:
-    Terminal(socket_t listenSocket);
-    ~Terminal();
+    class Terminal
+    {
+    private:
+        /* data */
+        socket_t m_listenSocket;
+    public:
+        Terminal(socket_t listenSocket);
+        ~Terminal();
 
-    ConnectionTCP* acceptConnections();
-};
+        ConnectionTCP* acceptConnections();
+    };
+}

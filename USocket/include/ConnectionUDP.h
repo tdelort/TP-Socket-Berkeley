@@ -12,11 +12,14 @@
 	using socket_t = SOCKET;
 #endif
 
-class ConnectionUDP : public Connection
+namespace uqac::network
 {
-public:
-    ConnectionUDP(socket_t s);
-    ~ConnectionUDP();
-    void Send(const std::string msg) override;
-    Connection::Type ConnectionType() override;
-};
+    class ConnectionUDP : public Connection
+    {
+    public:
+        ConnectionUDP(socket_t s);
+        ~ConnectionUDP();
+        void Send(const std::string msg) override;
+        Connection::Type ConnectionType() override;
+    };
+}

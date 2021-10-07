@@ -1,15 +1,18 @@
 #include "Connection.h"
 
-Connection::Connection()
-	: m_id(newID++)
-{}
-
-void Connection::AddConfig(Config config) 
+namespace uqac::network
 {
-	m_config = config;
-}
+	Connection::Connection()
+		: m_id(newID++)
+	{}
 
-unsigned int Connection::GetID()
-{
-	return m_id;
+	void Connection::AddConfig(Config config) 
+	{
+		m_config = config;
+	}
+
+	unsigned int Connection::GetID()
+	{
+		return m_id;
+	}
 }
