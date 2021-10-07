@@ -21,6 +21,7 @@
 namespace uqac::network
 {
     USocket::USocket()
+        : m_connections()
     {
         WSADATA wsaData;
         // Initialize Winsock
@@ -183,6 +184,9 @@ namespace uqac::network
             }
         }
         
+        if(m_connections.size() == 0)
+            return;
+
         // Handle Recv
         fd_set readSet;
         FD_ZERO(&readSet);

@@ -16,7 +16,11 @@ int main(void)
 			std::cout << c->GetID() << " sent : " << msg << std::endl;
             std::for_each(connections.begin(), connections.end(), [msg, c](uqac::network::Connection* target)
             { 
-                if (c->GetID() != target->GetID()) { target->Send(c->GetID() + "> " + msg); };
+                if (c->GetID() != target->GetID()) 
+                { 
+                    std::string str = std::to_string(c->GetID()) + "> " + msg;
+                    target->Send(str); 
+                }
             });
         },
         [](uqac::network::Connection* c) {
