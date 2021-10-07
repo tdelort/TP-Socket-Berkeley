@@ -214,13 +214,11 @@ namespace uqac::network
 
                     if (ret > 0)
                     {
-                        std::cout << "Bytes received : " << ret << std::endl;
                         for (int i = 0; i < ret; i++)
                         {
                             res += recvbuf[i];
                         }
 
-                        std::cout << "c : " << c << std::endl;
                         c->m_config.OnMessage(c, res, m_connections);
                     }
                     else if (ret == 0)

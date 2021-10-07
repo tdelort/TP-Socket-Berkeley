@@ -39,7 +39,6 @@ namespace uqac::network
             WSACleanup();
             exit(1);
         }
-        printf("Bytes Sent: %ld\n", err);
     }
 
     Connection::Type ConnectionTCP::ConnectionType()

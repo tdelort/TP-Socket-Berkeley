@@ -35,11 +35,15 @@ int main()
 	uqac::network::ConnectionTCP* c = (uqac::network::ConnectionTCP*)client.Connect("127.0.0.1", DEFAULT_PORT, uqac::network::Connection::Type::TCP);
 	c->AddConfig(config_msg);
 
+	std::cout << "Tapez un message pour l'envoyer, ou rien pour quitter" << std::endl;
+
 	std::string message;
-	for(int i = 0; i < 2; i++)
+	while(true)
 	{
-		std::cout << "tapez un msg" << std::endl;
+		message = "";
 		std::getline(std::cin, message);
+		if(message.size() < 1)
+			break;
 		c->Send(message);
 	}
 
