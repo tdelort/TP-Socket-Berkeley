@@ -1,22 +1,27 @@
 #include "USocket.h"
 #include "Terminal.h"
 
-#undef UNICODE
-
-#define WIN32_LEAN_AND_MEAN
-
-#include <windows.h>
-#include <winsock2.h>
-#include <ws2tcpip.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <algorithm>
 #include <iostream>
 #include <thread>
 
-// Need to link with Ws2_32.lib
-#pragma comment (lib, "Ws2_32.lib")
-// #pragma comment (lib, "Mswsock.lib")
+#ifdef __linux__
+	#include <sys/socket.h>
+    #include <netinet/in.h>
+    #include <netdb.h> 
+    #include <arpa/inet.h>
+	using socket_t = int;
+#elif _WIN32
+    #define WIN32_LEAN_AND_MEAN
+    #include <windows.h>
+    #include <winsock2.h>
+    #include <ws2tcpip.h>
+	using socket_t = SOCKET;
+#endif
+
+
 
 USocket::USocket()
 {
@@ -54,7 +59,7 @@ void USocket::Listen(char* port, Config config)
     struct addrinfo *result = NULL;
     struct addrinfo hints;
 	int err;
-    SOCKET listenSocket = INVALID_SOCKET;
+    socket_t listenSocket = INVALID_SOCKET;
 
     memset(&hints, 0, sizeof(struct addrinfo));
     hints.ai_family = AF_INET;
@@ -125,7 +130,7 @@ Connection* USocket::Connect(std::string addr, std::string port, Connection::Typ
         * ptr = NULL,
         hints;
 
-    SOCKET s = INVALID_SOCKET;
+    socket_t s = INVALID_SOCKET;
 
     memset(&hints, 0, sizeof(struct addrinfo));
     hints.ai_family = AF_INET;

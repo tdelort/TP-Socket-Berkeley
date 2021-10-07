@@ -1,11 +1,12 @@
 #pragma once
 
+// cannot forward declare because of enum
+#include "Connection.h"
+
 #include <thread>
 #include <vector>
 #include <string>
 #include <functional>
-
-#include "Connection.h"
 
 class Terminal;
 

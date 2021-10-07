@@ -11,8 +11,8 @@
 #include <string>
 #include <iostream>
 
-#include "ConnectionTCP.h"
-#include "USocket.h"
+#include <ConnectionTCP.h>
+#include <USocket.h>
 
 #pragma comment(lib, "Ws2_32.lib")
 

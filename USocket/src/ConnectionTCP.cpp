@@ -1,16 +1,16 @@
-#ifndef WIN32_LEAN_AND_MEAN
-#define WIN32_LEAN_AND_MEAN
-#endif
-
-#include <string>
-#include <windows.h>
-#include <winsock2.h>
-#include <ws2tcpip.h>
-#include <iphlpapi.h>
-
 #include "ConnectionTCP.h"
 
-ConnectionTCP::ConnectionTCP(SOCKET s)
+#include <string>
+
+#ifdef __linux__
+	#include <sys/socket.h>
+	using socket_t = int;
+#elif _WIN32
+    #include <winsock2.h>
+	using socket_t = SOCKET;
+#endif
+
+ConnectionTCP::ConnectionTCP(socket_t s)
 {
     m_s = s;
 }

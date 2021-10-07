@@ -1,15 +1,21 @@
 #pragma once
-#include <string>
-#include <windows.h>
-#include <winsock2.h>
-#include <ws2tcpip.h>
 
 #include "Connection.h"
+
+#include <string>
+
+#ifdef __linux__
+	#include <sys/socket.h>
+	using socket_t = int;
+#elif _WIN32
+	#include <winsock2.h>
+	using socket_t = SOCKET;
+#endif
 
 class ConnectionUDP : public Connection
 {
 public:
-    ConnectionUDP(SOCKET s);
+    ConnectionUDP(socket_t s);
     ~ConnectionUDP();
     void Send(const std::string msg) override;
     Connection::Type ConnectionType() override;

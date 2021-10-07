@@ -1,22 +1,14 @@
 #pragma once
 
-#undef UNICODE
-
-#define WIN32_LEAN_AND_MEAN
-
-#include <windows.h>
-#include <winsock2.h>
-#include <ws2tcpip.h>
-#include <stdlib.h>
-#include <stdio.h>
-
-// Need to link with Ws2_32.lib
-//#pragma comment (lib, "Ws2_32.lib")
-// #pragma comment (lib, "Mswsock.lib")
-
 #include "ConnectionTCP.h"
 
-#include <vector>
+#ifdef __linux__
+	#include <sys/socket.h>
+	using socket_t = int;
+#elif _WIN32
+	#include <winsock2.h>
+	using socket_t = SOCKET;
+#endif
 
 /**
  * Main job of Terminal is to run in the background and accept() all incoming connections.
@@ -29,9 +21,9 @@ class Terminal
 {
 private:
     /* data */
-    SOCKET m_listenSocket;
+    socket_t m_listenSocket;
 public:
-    Terminal(SOCKET listenSocket);
+    Terminal(socket_t listenSocket);
     ~Terminal();
 
     ConnectionTCP* acceptConnections();

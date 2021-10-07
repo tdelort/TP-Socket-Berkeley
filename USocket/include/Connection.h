@@ -1,16 +1,16 @@
 #pragma once
-#ifndef WIN32_LEAN_AND_MEAN
-#define WIN32_LEAN_AND_MEAN
-#endif
 
-#include <windows.h>
-#include <winsock2.h>
-#include <ws2tcpip.h>
-#include <iphlpapi.h>
 #include <functional>
 #include <string>
 
-#pragma comment(lib, "Ws2_32.lib")
+#ifdef __linux__
+	#include <sys/socket.h>
+	using socket_t = int;
+#elif _WIN32
+	#include <winsock2.h>
+	#pragma comment(lib, "Ws2_32.lib")
+	using socket_t = SOCKET;
+#endif
 
 class Connection
 {
@@ -39,6 +39,6 @@ public:
 
 protected:
 	const unsigned int m_id;
-	SOCKET m_s;
+	socket_t m_s;
 	Config m_config;
 };

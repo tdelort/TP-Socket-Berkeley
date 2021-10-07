@@ -1,24 +1,19 @@
-#undef UNICODE
-
-#define WIN32_LEAN_AND_MEAN
-
-#include <windows.h>
-#include <winsock2.h>
-#include <ws2tcpip.h>
-#include <stdlib.h>
-#include <stdio.h>
-
-// Need to link with Ws2_32.lib
-#pragma comment (lib, "Ws2_32.lib")
-
 #include "Terminal.h"
 #include "ConnectionTCP.h"
-#include "ConnectionUDP.h"
 
-#include <algorithm>
+#include <stdlib.h>
+#include <stdio.h>
 #include <iostream>
 
-Terminal::Terminal(SOCKET listenSocket)
+#ifdef __linux__
+	#include <sys/socket.h>
+	using socket_t = int;
+#elif _WIN32
+    #include <winsock2.h>
+	using socket_t = SOCKET;
+#endif
+
+Terminal::Terminal(socket_t listenSocket)
     : m_listenSocket(listenSocket)
 {
 }
@@ -36,7 +31,7 @@ ConnectionTCP* Terminal::acceptConnections()
     FD_SET(m_listenSocket, &readingSet);
 
     struct timeval tv = {0, 50};
-    int ret = select(m_listenSocket, &readingSet, NULL, NULL, &tv);
+    int ret = select((int)m_listenSocket, &readingSet, NULL, NULL, &tv);
 
     if(ret > 0)
     {
@@ -44,7 +39,7 @@ ConnectionTCP* Terminal::acceptConnections()
         {
             // An accept is pending
             std::cout << "accept is pending" << std::endl;
-            SOCKET clientSocket = accept(m_listenSocket, NULL, NULL);
+            socket_t clientSocket = accept(m_listenSocket, NULL, NULL);
             if (clientSocket == INVALID_SOCKET) 
             {
                 printf("accept failed with error: %d\n", WSAGetLastError());
