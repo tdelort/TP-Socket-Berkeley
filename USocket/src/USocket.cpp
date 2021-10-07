@@ -30,7 +30,8 @@ USocket::USocket()
     int err = WSAStartup(MAKEWORD(2,2), &wsaData);
     if (err != 0) 
     {
-        printf("WSAStartup failed with error: %d\n", err);
+        //printf("WSAStartup failed with error: %d\n", err);
+        std::cerr << "WSAStartup failed with error : " << err << std::endl;
         exit(1);
     }
 
@@ -56,7 +57,7 @@ USocket::~USocket()
 void USocket::Listen(char* port, Config config)
 {
     m_config = config;
-    struct addrinfo *result = NULL;
+    struct addrinfo *result = nullptr;
     struct addrinfo hints;
 	int err;
     socket_t listenSocket = INVALID_SOCKET;
@@ -68,10 +69,10 @@ void USocket::Listen(char* port, Config config)
     hints.ai_flags = AI_PASSIVE;
 
     // Resolve the server address and port
-    err = getaddrinfo(NULL, port, &hints, &result);
+    err = getaddrinfo(nullptr, port, &hints, &result);
     if ( err != 0 ) 
     {
-        printf("getaddrinfo failed with error: %d\n", err);
+        std::cerr << "getaddrinfo failed with error : " << err << std::endl;
         WSACleanup();
         exit(1);
     }
@@ -80,7 +81,7 @@ void USocket::Listen(char* port, Config config)
     listenSocket = socket(result->ai_family, result->ai_socktype, result->ai_protocol);
     if (listenSocket == INVALID_SOCKET) 
     {
-        printf("socket failed with error: %ld\n", WSAGetLastError());
+        std::cerr << "socket failed with error : " << WSAGetLastError() << std::endl;
         freeaddrinfo(result);
         WSACleanup();
         exit(1);
@@ -96,7 +97,7 @@ void USocket::Listen(char* port, Config config)
     err = bind( listenSocket, result->ai_addr, (int)result->ai_addrlen);
     if (err == SOCKET_ERROR) 
     {
-        printf("bind failed with error: %d\n", WSAGetLastError());
+        std::cerr << "bind failed with error : " << WSAGetLastError() << std::endl;
         freeaddrinfo(result);
         closesocket(listenSocket);
         WSACleanup();
@@ -113,7 +114,7 @@ void USocket::Listen(char* port, Config config)
     err = listen(listenSocket, SOMAXCONN);
     if (err == SOCKET_ERROR) 
     {
-        printf("listen failed with error: %d\n", WSAGetLastError());
+        std::cerr << "listen failed with error : " << WSAGetLastError() << std::endl;
         closesocket(listenSocket);
         WSACleanup();
         exit(1);
@@ -126,8 +127,8 @@ void USocket::Listen(char* port, Config config)
 Connection* USocket::Connect(std::string addr, std::string port, Connection::Type type)
 {
     int err;
-    struct addrinfo* results = NULL,
-        * ptr = NULL,
+    struct addrinfo* results = nullptr,
+        * ptr = nullptr,
         hints;
 
     socket_t s = INVALID_SOCKET;
@@ -138,11 +139,11 @@ Connection* USocket::Connect(std::string addr, std::string port, Connection::Typ
     err = getaddrinfo("127.0.0.1", port.c_str(), &hints, &results);
     if (err)
     {
-        printf("getaddrinfo failed: %d\n", err);
+        std::cerr << "getaddrinfo failed with error : " << err << std::endl;
         exit(1);
     }
 
-    for (ptr = results; ptr != NULL; ptr = ptr->ai_next)
+    for (ptr = results; ptr != nullptr; ptr = ptr->ai_next)
     {
         s = socket(AF_INET, SOCK_STREAM, 0);
         err = connect(s, ptr->ai_addr, (int)ptr->ai_addrlen);
@@ -158,7 +159,7 @@ Connection* USocket::Connect(std::string addr, std::string port, Connection::Typ
 
     if (s == INVALID_SOCKET)
     {
-        printf("connection failed with error: %d\n", WSAGetLastError());
+        std::cerr << "connection failed with error : " << WSAGetLastError() << std::endl;
         WSACleanup();
         exit(1);
     }
@@ -212,7 +213,7 @@ void USocket::Update()
 
                 if (ret > 0)
                 {
-                    printf("Bytes received: %d\n", ret);
+                    std::cout << "Bytes received : " << ret << std::endl;
                     for (int i = 0; i < ret; i++)
                     {
                         res += recvbuf[i];

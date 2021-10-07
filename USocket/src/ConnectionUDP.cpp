@@ -1,6 +1,7 @@
 #include "ConnectionUDP.h"
 
 #include <string>
+#include <iostream>
 
 #ifdef __linux__
 	#include <sys/socket.h>
@@ -19,7 +20,7 @@ ConnectionUDP::~ConnectionUDP()
 {
     int err = shutdown(m_s, SD_SEND);
     if (err == SOCKET_ERROR) {
-        printf("shutdown failed with error: %d\n", WSAGetLastError());
+        std::cerr << "shutdown failed with error : " << WSAGetLastError() << std::endl;
         WSACleanup();
         exit(1);
     }
