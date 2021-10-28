@@ -1,12 +1,14 @@
 cmake_minimum_required(VERSION 3.19)
 set(CMAKE_CXX_STANDARD 17)
 
-project(SocketChat)
+project(USocket)
 
-add_executable(Server server.cpp)
-add_executable(Client client.cpp)
+add_library(USocket STATIC
+        src/USocket.cpp
+        src/ConnectionTCP.cpp
+        src/ConnectionUDP.cpp
+        src/Connection.cpp
+        src/Terminal.cpp
+)
 
-add_subdirectory(USocket)
-
-target_link_libraries(Server USocket)
-target_link_libraries(Client USocket)
+target_include_directories(USocket PUBLIC include)
