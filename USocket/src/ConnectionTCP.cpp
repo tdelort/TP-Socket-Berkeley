@@ -31,8 +31,9 @@ namespace uqac::network
 
     void ConnectionTCP::Send(const std::string msg)
     {
+        int size = msg.size();
         const char* sendbuf = msg.c_str();
-        int err = send(m_s, sendbuf, (int)strlen(sendbuf), 0);
+        int err = send(m_s, sendbuf, size, 0);
         if (err == SOCKET_ERROR) {
             std::cerr << "send failed with error : " << WSAGetLastError() << std::endl;
             closesocket(m_s);
