@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Connection.h"
+#include "span.h"
 
 #include <string>
 
@@ -19,7 +20,7 @@ namespace uqac::network
 	public:
 		ConnectionTCP(socket_t s);
 		~ConnectionTCP();
-		void Send(const std::string msg) override;
+		void Send(const span<char> msg) override;
 		static const int RECV_BUF_LENGTH = 512;
 		Connection::Type ConnectionType() override;
 	};

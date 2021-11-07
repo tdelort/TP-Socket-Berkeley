@@ -19,7 +19,7 @@ namespace uqac::network
     public:
         ConnectionUDP(socket_t s);
         ~ConnectionUDP();
-        void Send(const std::string msg) override;
+        void Send(const span<char> msg) override;
         Connection::Type ConnectionType() override;
     };
 }

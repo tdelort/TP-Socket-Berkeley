@@ -12,14 +12,21 @@
 int main(void) 
 {
     uqac::network::Connection::Config config_msg = {
-        [](uqac::network::Connection* c, std::string msg, std::vector<uqac::network::Connection*> connections) {
-			std::cout << c->GetID() << " sent : " << msg << std::endl;
+        [](uqac::network::Connection* c, uqac::span<char> msg, std::vector<uqac::network::Connection*> connections) {
+			std::cout << c->GetID() << " sent : ";
+
+            for (auto it = msg.begin(); it != msg.end(); ++it)
+                std::cout << *it;
+            
+            std::cout << std::endl;
+
             std::for_each(connections.begin(), connections.end(), [msg, c](uqac::network::Connection* target)
             { 
                 if (c->GetID() != target->GetID()) 
                 { 
-                    std::string str = std::to_string(c->GetID()) + "> " + msg;
-                    target->Send(str); 
+
+                    target->Send(msg); 
+
                 }
             });
         },

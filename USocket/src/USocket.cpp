@@ -1,5 +1,6 @@
 #include "USocket.h"
 #include "Terminal.h"
+#include "span.h"
 
 #include <algorithm>
 #include <iostream>
@@ -207,19 +208,14 @@ namespace uqac::network
                 if (FD_ISSET(c->m_s, &readSet))
                 {
                     // receive
-                    std::string res = "";
-                    char recvbuf[ConnectionTCP::RECV_BUF_LENGTH];
-
+                    char* recvbuf = new char[ConnectionTCP::RECV_BUF_LENGTH];
                     int ret = recv(c->m_s, recvbuf, ConnectionTCP::RECV_BUF_LENGTH, 0);
 
                     if (ret > 0)
                     {
-                        for (int i = 0; i < ret; i++)
-                        {
-                            res += recvbuf[i];
-                        }
-
-                        c->m_config.OnMessage(c, res, m_connections);
+                        span<char> msg(recvbuf, ret);
+                        c->m_config.OnMessage(c, msg, m_connections);
+                        delete[] recvbuf;
                     }
                     else if (ret == 0)
                     {

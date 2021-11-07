@@ -11,6 +11,7 @@
 
 #include <ConnectionTCP.h>
 #include <USocket.h>
+#include <span.h>
 
 #pragma comment(lib, "Ws2_32.lib")
 
@@ -19,8 +20,10 @@
 int main()
 {
 	uqac::network::Connection::Config config_msg = {
-		[](uqac::network::Connection* c, std::string msg, std::vector<uqac::network::Connection*> connections) {
-			std::cout << msg << std::endl;
+		[](uqac::network::Connection* c, uqac::span<char> msg, std::vector<uqac::network::Connection*> connections) {
+            for (auto it = msg.begin(); it != msg.end(); ++it)
+                std::cout << *it;
+            std::cout << std::endl;
 		},
         [](uqac::network::Connection* c) {
             std::cout << "disconnect : " << std::endl;
@@ -44,7 +47,12 @@ int main()
 		std::getline(std::cin, message);
 		if(message.size() < 1)
 			break;
-		c->Send(message);
+
+		char *tmp = new char[message.size() + 1];
+		strcpy(tmp, message.c_str());
+		uqac::span<char> msg(tmp, message.size());
+		c->Send(msg);
+		delete[] tmp;
 	}
 
 	delete c;
