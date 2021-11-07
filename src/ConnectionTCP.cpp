@@ -3,6 +3,8 @@
 #include <string>
 #include <iostream>
 
+#include "span.h"
+
 #ifdef __linux__
 	#include <sys/socket.h>
 	using socket_t = int;
@@ -29,10 +31,10 @@ namespace uqac::network
         closesocket(m_s);
     }
 
-    void ConnectionTCP::Send(const std::string msg)
+    void ConnectionTCP::Send(const span<char> msg)
     {
         int size = msg.size();
-        const char* sendbuf = msg.c_str();
+        const char* sendbuf = msg.begin();
         int err = send(m_s, sendbuf, size, 0);
         if (err == SOCKET_ERROR) {
             std::cerr << "send failed with error : " << WSAGetLastError() << std::endl;

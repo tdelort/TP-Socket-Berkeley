@@ -28,7 +28,7 @@ namespace uqac::network
         closesocket(m_s);
     }
 
-    void ConnectionUDP::Send(const std::string msg)
+    void ConnectionUDP::Send(const span<char> msg)
     {
 
     }

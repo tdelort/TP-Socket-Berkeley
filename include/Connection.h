@@ -3,6 +3,8 @@
 #include <functional>
 #include <string>
 
+#include "span.h"
+
 #ifdef __linux__
 	#include <sys/socket.h>
 	using socket_t = int;
@@ -22,14 +24,14 @@ namespace uqac::network
 	public:
 		struct Config
 		{
-			std::function<void(Connection*, std::string, std::vector<Connection*>)> OnMessage;
+			std::function<void(Connection*, span<char>, std::vector<Connection*>)> OnMessage;
 			std::function<void(Connection*)> OnDisconnect;
 			std::function<void(Connection*, int)> OnError;
 		};
 
 		Connection();
 
-		virtual void Send(const std::string msg) = 0;
+		virtual void Send(const span<char> msg) = 0;
 		void AddConfig(Config config);
 
 		unsigned int GetID();
